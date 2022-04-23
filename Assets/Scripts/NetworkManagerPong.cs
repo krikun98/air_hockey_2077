@@ -13,6 +13,7 @@ namespace Mirror.AirHockey2077
     [AddComponentMenu("")]
     public class NetworkManagerPong : NetworkManager
     {
+        public ScoreKeeper keeper;
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
         GameObject ball;
@@ -23,20 +24,38 @@ namespace Mirror.AirHockey2077
             Transform start = numPlayers == 0 ? leftRacketSpawn : rightRacketSpawn;
             GameObject player = Instantiate(playerPrefab, start.position, start.rotation);
             NetworkServer.AddPlayerForConnection(conn, player);
+            
+            keeper.ZeroScores();
 
             // spawn ball if two players
             if (numPlayers == 2)
             {
-                ball = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Ball"));
-                NetworkServer.Spawn(ball);
+                SpawnBall();
             }
         }
 
-        public override void OnServerDisconnect(NetworkConnectionToClient conn)
+        public void SpawnBall()
+        {
+            ball = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Ball"));
+            NetworkServer.Spawn(ball);
+        }
+
+        public void IncrementScore(bool position)
+        {
+            keeper.IncrementScore(position);
+        }
+
+        public void DespawnBall()
         {
             // destroy ball
             if (ball != null)
                 NetworkServer.Destroy(ball);
+        }
+
+        public override void OnServerDisconnect(NetworkConnectionToClient conn)
+        {
+            DespawnBall();
+            keeper.ZeroScores();
 
             // call base functionality (actually destroys the player)
             base.OnServerDisconnect(conn);

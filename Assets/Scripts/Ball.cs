@@ -13,9 +13,26 @@ namespace Mirror.AirHockey2077
 
             // only simulate ball physics on server
             rigidbody2d.simulated = true;
+            ServeBall();
+        }
 
+        void Awake()
+        {
+            ServeBall();
+        }
+
+        public void ServeBall()
+        {
+            Vector2 dirVector = Vector2.right;
+            if (Random.Range(0f, 1f) < 0.5f)
+            {
+                dirVector = Vector2.left;
+            }
+            float tilt = Random.Range(0f, 0.5f);
+            Debug.Log("Tilt is " + tilt);
+            rigidbody2d.position = Vector2.up * 12;
             // Serve the ball from left player
-            rigidbody2d.velocity = Vector2.right * speed;
+            rigidbody2d.velocity = (Vector2.down * tilt + dirVector * (1-tilt))* speed;
         }
 
         float HitFactor(Vector2 ballPos, Vector2 racketPos, float racketHeight)
