@@ -17,6 +17,7 @@ namespace Mirror.AirHockey2077
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
         GameObject ball;
+        GameObject computer;
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
@@ -31,6 +32,13 @@ namespace Mirror.AirHockey2077
             if (numPlayers == 2)
             {
                 SpawnBall();
+            }
+            
+            if (numPlayers == 1)
+            {
+                SpawnBall();
+                computer = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Computer"));
+                NetworkServer.Spawn(computer);
             }
         }
 
@@ -52,9 +60,16 @@ namespace Mirror.AirHockey2077
                 NetworkServer.Destroy(ball);
         }
 
+        public void DespawnComputer()
+        {
+            if (computer != null)
+                NetworkServer.Destroy(computer);
+        }
+
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             DespawnBall();
+            DespawnComputer();
             keeper.ZeroScores();
 
             // call base functionality (actually destroys the player)
