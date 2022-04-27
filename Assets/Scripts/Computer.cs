@@ -1,5 +1,3 @@
-using System;
-using Mirror.Examples.Pong;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -8,41 +6,75 @@ namespace Mirror.AirHockey2077
     public class Computer : NetworkBehaviour
     {
         public float speed = 30;
+        
+        private GameObject _wallTop;
+        private GameObject _wallBottom;
+        private float _wallTopRightPos;
+        private float _wallBottomRightPos;
+        
         public Rigidbody2D rigidbody2d;
-        private GameObject ball;
-        private Vector2 ballPos;
+        private float _myPosY;
+        
+        private GameObject _ball;
+        private float _ballPosY;
 
         public override void OnStartServer()
         {
             base.OnStartServer();
             // only simulate ball physics on server
             rigidbody2d.simulated = true;
-            
         }
 
         [ServerCallback]
         void Update()
         {
-            if (!ball)
+            if (!_ball)
             {
-                ball = GameObject.Find("Ball(Clone)");
+                FindBall();
             }
-            Assert.IsNotNull(ball);
+
+            if (!_wallTop)
+            {
+                FindWallTop();
+            }
             
-            ballPos = ball.transform.position;
-            if (rigidbody2d.position.y < ballPos.y)
+            if (!_wallBottom)
+            {
+                FindWallBottom();
+            }
+
+            _ballPosY = _ball.transform.position.y;
+            _myPosY = rigidbody2d.position.y;
+            
+            if (_myPosY < _ballPosY && _myPosY < _wallTopRightPos)
             {
                 rigidbody2d.transform.position += new Vector3(0, speed * Time.deltaTime, 0);
-                // Vector2 dir = new Vector2(0, 1);
-                // rigidbody2d.velocity = dir * speed;
             }
             
-            if (transform.localPosition.y > ballPos.y)
+            if (_myPosY > _ballPosY && _myPosY > _wallBottomRightPos)
             {
                 rigidbody2d.transform.position += new Vector3(0, -speed * Time.deltaTime, 0);
-                // Vector2 dir = new Vector2(0, -1);
-                // rigidbody2d.velocity = dir * speed;
             }
-        } 
+        }
+
+        private void FindBall()
+        {
+            _ball = GameObject.Find("Ball(Clone)");
+            Assert.IsNotNull(_ball);
+        }
+
+        private void FindWallTop()
+        {
+            _wallTop = GameObject.Find("WallTopRight");
+            Assert.IsNotNull(_wallTop);
+            _wallTopRightPos = _wallTop.transform.position.y - _wallTop.GetComponent<BoxCollider2D>().bounds.size.y / 2;
+        }
+
+        private void FindWallBottom()
+        {
+            _wallBottom = GameObject.Find("WallBottomRight");
+            Assert.IsNotNull(_wallBottom);
+            _wallBottomRightPos = _wallBottom.transform.position.y + _wallBottom.GetComponent<BoxCollider2D>().bounds.size.y / 2;
+        }
     }
 }

@@ -16,8 +16,8 @@ namespace Mirror.AirHockey2077
         public ScoreKeeper keeper;
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
-        GameObject ball;
-        GameObject computer;
+        private GameObject _ball;
+        private GameObject _computer;
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
@@ -36,16 +36,21 @@ namespace Mirror.AirHockey2077
             
             if (numPlayers == 1)
             {
-                SpawnBall();
-                computer = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Computer"));
-                NetworkServer.Spawn(computer);
+                SpawnComputer();
             }
         }
 
         public void SpawnBall()
         {
-            ball = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Ball"));
-            NetworkServer.Spawn(ball);
+            _ball = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Ball"));
+            NetworkServer.Spawn(_ball);
+        }
+
+        private void SpawnComputer()
+        {
+            SpawnBall();
+            _computer = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Computer"));
+            NetworkServer.Spawn(_computer);
         }
 
         public void IncrementScore(bool position)
@@ -56,14 +61,14 @@ namespace Mirror.AirHockey2077
         public void DespawnBall()
         {
             // destroy ball
-            if (ball != null)
-                NetworkServer.Destroy(ball);
+            if (_ball != null)
+                NetworkServer.Destroy(_ball);
         }
 
-        public void DespawnComputer()
+        private void DespawnComputer()
         {
-            if (computer != null)
-                NetworkServer.Destroy(computer);
+            if (_computer != null)
+                NetworkServer.Destroy(_computer);
         }
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
