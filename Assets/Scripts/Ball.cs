@@ -30,7 +30,7 @@ namespace Mirror.AirHockey2077
             }
             float tilt = Random.Range(0f, 0.5f);
             Debug.Log("Tilt is " + tilt);
-            rigidbody2d.position = Vector2.zero;
+            rigidbody2d.position = Vector2.up * 5;
             // Serve the ball from left player
             rigidbody2d.velocity = (Vector2.down * tilt + dirVector * (1-tilt))* speed;
         }
