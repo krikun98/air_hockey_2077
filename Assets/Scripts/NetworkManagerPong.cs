@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -17,6 +18,8 @@ namespace Mirror.AirHockey2077
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
         GameObject ball;
+        List<GameObject> obstacles;
+        private int NUMBER_OF_OBSTACLES = 4;
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
@@ -31,6 +34,7 @@ namespace Mirror.AirHockey2077
             if (numPlayers == 2)
             {
                 SpawnBall();
+                SpawnObstacles();
             }
         }
 
@@ -52,9 +56,40 @@ namespace Mirror.AirHockey2077
                 NetworkServer.Destroy(ball);
         }
 
+        public void SpawnObstacles()
+        {
+            // int numObstacles = Random.Range(1, NUMBER_OF_OBSTACLES + 1);
+            Debug.Log("SpawnObstacles");
+            var obstacle = CreateObstacle();
+            NetworkServer.Spawn(obstacle);
+            Debug.Log("NetworkServer.Spawn(obstacle);");
+        }
+
+        private GameObject CreateObstacle()
+        {
+            GameObject obstacle = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Obstacle4"));
+            Debug.Log("Instantiate");
+            Obstacle other = (Obstacle) obstacle.GetComponent(typeof(Obstacle));
+            other.sayHello();
+            other.setStartPosition(new Vector2(-5, 5));
+            Debug.Log("obstacle.sayHello();");
+            return obstacle;
+        }
+
+        public void DespawnObstacles()
+        {
+            // destroy ball
+            if (obstacles != null) {
+                foreach(GameObject obstacle in obstacles){
+                    NetworkServer.Destroy(obstacle);
+                }
+            }
+        }
+
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             DespawnBall();
+            DespawnObstacles();
             keeper.ZeroScores();
 
             // call base functionality (actually destroys the player)
