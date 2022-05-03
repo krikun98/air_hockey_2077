@@ -342,7 +342,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 320155267}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7, y: 5, z: 0}
+  m_LocalPosition: {x: -7, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 305695649}
@@ -933,7 +933,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 884294187}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7, y: 5, z: 0}
+  m_LocalPosition: {x: 7, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 305695649}
@@ -1428,7 +1428,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1513814252}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7, y: -5, z: 0}
+  m_LocalPosition: {x: -7, y: -4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 305695649}
@@ -1615,6 +1615,7 @@ MonoBehaviour:
   - {fileID: 1080679924113744, guid: 31aec1150af6f80e2a32e67d839c29ff, type: 3}
   - {fileID: 1080679924113744, guid: ffd3cbf3913f19613a8652e299392b84, type: 3}
   - {fileID: 1080679924113744, guid: 7360d8010ccd7f246b2a0e006be324a1, type: 3}
+  - {fileID: 127808375590979840, guid: c5bc4f95ea7584577871b3a36976721f, type: 3}
   keeper: {fileID: 580100638}
   leftRacketSpawn: {fileID: 473997961}
   rightRacketSpawn: {fileID: 1397990096}
@@ -1643,7 +1644,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1924468412}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7, y: -5, z: 0}
+  m_LocalPosition: {x: 7, y: -4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 305695649}
