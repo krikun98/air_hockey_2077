@@ -14,7 +14,7 @@ namespace Mirror.AirHockey2077
 
         //computer racket
         public const float RacketPosX = 8;
-        public const float RacketSpeed = 20;
+        public const float RacketSpeed = 7;
 
         // Constant Lines
         public static readonly Line racketLine = new Line(1, 0, -RacketPosX);

@@ -11,7 +11,6 @@ namespace Mirror.AirHockey2077
         protected override void AI()
         {
             ball.UpdatePosition();
-            // Debug.Log("CurrentDx = " + ball.Dx() + " LastDx = " + lastBallDir);
             if (ball.Dx() > 0 && lastBallDir <= 0)
             {
                 ResetPrediction();

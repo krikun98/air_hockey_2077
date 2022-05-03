@@ -82,6 +82,8 @@ namespace Mirror.AirHockey2077
                 computerInstance.UpdateBall(_ballInstance);
             }
 
+        }
+
         private void SpawnComputer2()
         {
             SpawnBall();
@@ -98,8 +100,8 @@ namespace Mirror.AirHockey2077
         public void DespawnBall()
         {
             // destroy ball
-            if (_ball != null)
-                NetworkServer.Destroy(_ball);
+            if (ball != null)
+                NetworkServer.Destroy(ball);
         }
 
         
