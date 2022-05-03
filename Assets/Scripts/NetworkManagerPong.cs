@@ -39,8 +39,8 @@ namespace Mirror.AirHockey2077
 
             if (numPlayers == 1)
             {
-                // SpawnDefaultComputer();
-                SpawnSmartComputer();
+                SpawnDefaultComputer();
+                // SpawnSmartComputer();
 //                 SpawnComputer2();
             }
         }

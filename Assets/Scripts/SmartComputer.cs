@@ -51,25 +51,25 @@ namespace Mirror.AirHockey2077
         {
             if (point.y > myY && point.y < Constants.Top)
             {
-                if (Math.Abs(point.y - myY) < Time.deltaTime * speed)
+                if (Math.Abs(point.y - myY) < Time.fixedDeltaTime * speed)
                 {
-                    rigidbody2d.transform.position += new Vector3(0, Math.Abs(point.y - myY), 0);
+                    Move(new Vector3(0, Math.Abs(point.y - myY), 0));
                 }
                 else
                 {
-                    MoveUp();
+                    Move(new Vector3(0, speed * Time.fixedDeltaTime, 0));
                 }
             }
 
             if (point.y < myY && point.y > Constants.Bottom)
             {
-                if (Math.Abs(point.y - myY) < Time.deltaTime * speed)
+                if (Math.Abs(point.y - myY) < Time.fixedDeltaTime * speed)
                 {
-                    rigidbody2d.transform.position += new Vector3(0, -Math.Abs(point.y - myY), 0);
+                    Move(new Vector3(0, -Math.Abs(point.y - myY), 0));
                 }
                 else
                 {
-                    MoveDown();
+                    Move(new Vector3(0, -speed * Time.fixedDeltaTime, 0));
                 }
             }
         }

@@ -26,7 +26,7 @@ namespace Mirror.AirHockey2077
         }
 
         [ServerCallback]
-        private void Update()
+        private void FixedUpdate()
         {
             AI();
         }
@@ -44,14 +44,22 @@ namespace Mirror.AirHockey2077
             currentPredictPoint = Constants.undef;
         }
 
-        protected void MoveUp()
+		[ServerCallback]
+		protected void Move(Vector3 movement) {
+			MoveServer(movement);
+			MoveClient(movement);
+		}
+
+		[ServerCallback]
+        private void MoveServer(Vector3 movement)
         {
-            rigidbody2d.transform.position += new Vector3(0, speed * Time.deltaTime, 0);
+            rigidbody2d.transform.position += movement;
         }
 
-        protected void MoveDown()
+		[ClientRpc]
+        private void MoveClient(Vector3 movement)
         {
-            rigidbody2d.transform.position += new Vector3(0, -speed * Time.deltaTime, 0);
+            rigidbody2d.transform.position += movement;
         }
     }
 }

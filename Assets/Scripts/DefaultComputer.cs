@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Mirror.AirHockey2077
 {
@@ -10,12 +11,26 @@ namespace Mirror.AirHockey2077
             UpdatePositions();
             if (myY < ball.Y() && myY < Constants.WallTopRightPos)
             {
-                MoveUp();
+                if (Math.Abs(ball.Y() - myY) < Time.fixedDeltaTime * speed)
+                {
+                    Move(new Vector3(0, Math.Abs(ball.Y() - myY), 0));
+                }
+                else
+                {
+                    Move(new Vector3(0, speed * Time.fixedDeltaTime, 0));
+                }
             }
 
             if (myY > ball.Y() && myY > Constants.WallBottomRightPos)
             {
-                MoveDown();
+                if (Math.Abs(ball.Y() - myY) < Time.fixedDeltaTime * speed)
+                {
+                    Move(new Vector3(0, -Math.Abs(ball.Y() - myY), 0));
+                }
+                else
+                {
+                    Move(new Vector3(0, -speed * Time.fixedDeltaTime, 0));
+                }
             }
         }
     }
