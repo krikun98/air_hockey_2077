@@ -26,14 +26,14 @@ namespace Mirror.AirHockey2077
             // if (!isServer) return;
             // rigidbody2d.velocity  = transform.right;
             // rigidbody2d.AddTorque(45 * Time.fixedDeltaTime);
-            
-            Move();
+            if (isServer)
+                Move();
         }
 
         private void Move()
         {
             transform.Rotate(0, 0, _rotationSpeed * Time.fixedDeltaTime);
-            
+
             // if (waypointIndex <= path.Count - 1)
             if (curPathLen <= path.Count)
             {
