@@ -5,7 +5,7 @@ namespace Mirror.AirHockey2077
 {
     public class Computer2 : NetworkBehaviour
     {
-        public float speed = 30;
+        public float speed = 10;
         
         private GameObject _wallTop;
         private GameObject _wallBottom;

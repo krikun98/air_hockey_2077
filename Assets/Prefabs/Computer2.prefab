@@ -196,7 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  speed: 30
+  speed: 10
   rigidbody2d: {fileID: -8389980470073813956}
 --- !u!114 &-4211954070221141420
 MonoBehaviour:
