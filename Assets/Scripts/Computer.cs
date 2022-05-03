@@ -1,22 +1,27 @@
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.PlayerLoop;
 
 namespace Mirror.AirHockey2077
 {
-    public class Computer : NetworkBehaviour
+    public abstract class Computer : NetworkBehaviour
     {
-        public float speed = 30;
-        
-        private GameObject _wallTop;
-        private GameObject _wallBottom;
-        private float _wallTopRightPos;
-        private float _wallBottomRightPos;
-        
+        protected readonly float speed = Constants.racketSpeed;
+        protected readonly float left = Constants.racketLeft;
+        protected readonly float right = Constants.racketRight;
+        protected Vector2 _undef = new Vector2(-100, -100);
+
         public Rigidbody2D rigidbody2d;
-        private float _myPosY;
-        
-        private GameObject _ball;
-        private float _ballPosY;
+        protected float myY;
+        protected Ball ball;
+        protected bool predict;
+        protected Vector2 currentPredictPoint;
+
+        public void UpdateBall(Ball newBall)
+        {
+            ball = newBall;
+        }
 
         public override void OnStartServer()
         {
@@ -26,55 +31,32 @@ namespace Mirror.AirHockey2077
         }
 
         [ServerCallback]
-        void Update()
+        private void Update()
         {
-            if (!_ball)
-            {
-                FindBall();
-            }
-
-            if (!_wallTop)
-            {
-                FindWallTop();
-            }
-            
-            if (!_wallBottom)
-            {
-                FindWallBottom();
-            }
-
-            _ballPosY = _ball.transform.position.y;
-            _myPosY = rigidbody2d.position.y;
-            
-            if (_myPosY < _ballPosY && _myPosY < _wallTopRightPos)
-            {
-                rigidbody2d.transform.position += new Vector3(0, speed * Time.deltaTime, 0);
-            }
-            
-            if (_myPosY > _ballPosY && _myPosY > _wallBottomRightPos)
-            {
-                rigidbody2d.transform.position += new Vector3(0, -speed * Time.deltaTime, 0);
-            }
+            AI();
         }
 
-        private void FindBall()
+        protected void UpdatePositions()
         {
-            _ball = GameObject.Find("Ball(Clone)");
-            Assert.IsNotNull(_ball);
+            myY = rigidbody2d.position.y;
         }
 
-        private void FindWallTop()
+        protected abstract void AI();
+
+        public void ResetPrediction()
         {
-            _wallTop = GameObject.Find("WallTopRight");
-            Assert.IsNotNull(_wallTop);
-            _wallTopRightPos = _wallTop.transform.position.y - _wallTop.GetComponent<BoxCollider2D>().bounds.size.y / 2;
+            predict = false;
+            currentPredictPoint = _undef;
         }
 
-        private void FindWallBottom()
+        protected void MoveUp()
         {
-            _wallBottom = GameObject.Find("WallBottomRight");
-            Assert.IsNotNull(_wallBottom);
-            _wallBottomRightPos = _wallBottom.transform.position.y + _wallBottom.GetComponent<BoxCollider2D>().bounds.size.y / 2;
+            rigidbody2d.transform.position += new Vector3(0, speed * Time.deltaTime, 0);
+        }
+
+        protected void MoveDown()
+        {
+            rigidbody2d.transform.position += new Vector3(0, -speed * Time.deltaTime, 0);
         }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -17,7 +18,9 @@ namespace Mirror.AirHockey2077
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
         private GameObject _ball;
+        private Ball _ballInstance;
         private GameObject _computer;
+        public Computer computerInstance;
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
@@ -36,7 +39,8 @@ namespace Mirror.AirHockey2077
             
             if (numPlayers == 1)
             {
-                SpawnComputer();
+                // SpawnDefaultComputer();
+                SpawnSmartComputer();
             }
         }
 
@@ -44,13 +48,30 @@ namespace Mirror.AirHockey2077
         {
             _ball = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Ball"));
             NetworkServer.Spawn(_ball);
+            _ballInstance = _ball.GetComponent<Ball>();
+            _ballInstance.UdateManager(this);
+            if (computerInstance)
+            {
+                computerInstance.UpdateBall(_ballInstance);
+            }
         }
 
-        private void SpawnComputer()
+        private void SpawnDefaultComputer()
         {
-            SpawnBall();
-            _computer = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Computer"));
+            var pref = spawnPrefabs.Find(prefab => prefab.name == "DefaultComputer");
+            _computer = Instantiate(pref);
             NetworkServer.Spawn(_computer);
+            computerInstance = _computer.GetComponent<DefaultComputer>();
+            SpawnBall();
+        }
+        
+        private void SpawnSmartComputer()
+        {
+            var pref = spawnPrefabs.Find(prefab => prefab.name == "SmartComputer");
+            _computer = Instantiate(pref);
+            NetworkServer.Spawn(_computer);
+            computerInstance = _computer.GetComponent<SmartComputer>();
+            SpawnBall();
         }
 
         public void IncrementScore(bool position)

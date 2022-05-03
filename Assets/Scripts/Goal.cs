@@ -18,6 +18,7 @@ namespace Mirror.AirHockey2077
             manager.DespawnBall(); 
             manager.IncrementScore(position);
             manager.SpawnBall();
+            manager.computerInstance.ResetPrediction();
         }
     }
 }
