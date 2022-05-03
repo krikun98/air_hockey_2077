@@ -71,7 +71,7 @@ namespace Mirror.AirHockey2077
             Debug.Log("Instantiate");
             Obstacle other = (Obstacle) obstacle.GetComponent(typeof(Obstacle));
             other.sayHello();
-            other.setStartPosition(new Vector2(-5, 5));
+            // other.setStartPosition(new Vector2(-5, 2));
             Debug.Log("obstacle.sayHello();");
             return obstacle;
         }

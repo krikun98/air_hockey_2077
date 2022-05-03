@@ -82,7 +82,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &114290021321007948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,10 +117,10 @@ MonoBehaviour:
   clientAuthority: 0
   sendInterval: 0.05
   syncPosition: 1
-  syncRotation: 0
+  syncRotation: 1
   syncScale: 0
   interpolatePosition: 1
-  interpolateRotation: 0
+  interpolateRotation: 1
   interpolateScale: 0
   bufferTimeMultiplier: 1
   bufferSizeLimit: 64
@@ -150,6 +150,7 @@ MonoBehaviour:
   syncInterval: 0.1
   speed: 30
   rigidbody2d: {fileID: 50354248948880112}
+  waypoints: []
 --- !u!1 &6085131783065591379
 GameObject:
   m_ObjectHideFlags: 0
