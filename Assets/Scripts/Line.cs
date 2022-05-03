@@ -23,10 +23,16 @@ namespace Mirror.AirHockey2077
             C = x1 * y2 - x2 * y1;
         }
 
-        public Vector2 Point(Line line)
+        public Vector2 Intersect(Line line)
         {
-            float y = (-line.C + line.A / A * C) / (line.B - line.A / A * B);
-            float x = (-C - B * y) / A;
+            float d = A * line.B - line.A * B;
+            if (d.Equals(0))
+            {
+                return Constants.undef;
+            }
+
+            float y = (line.A * C - A * line.C) / d;
+            float x = (B * line.C - line.B * C) / d;
             return new Vector2(x, y);
         }
     }

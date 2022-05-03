@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Mirror.AirHockey2077
 {
     public static class Constants
@@ -12,11 +14,11 @@ namespace Mirror.AirHockey2077
 
         //computer racket
         public const float RacketPosX = 8;
-        public const float RacketSpeed = 5;
+        public const float RacketSpeed = 20;
 
         // Constant Lines
-        public static readonly Line topWallLine = new Line(0, 1, -Top);
-        public static readonly Line bottomWallLine = new Line(0, 1, Bottom);
         public static readonly Line racketLine = new Line(1, 0, -RacketPosX);
+        
+        public static readonly Vector2 undef = new Vector2(-100, -100);
     }
 }

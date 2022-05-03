@@ -14,7 +14,7 @@ namespace Mirror.AirHockey2077
         private float _lastY;
         private float _ballDx;
         private float _ballDy;
-        private Line _dir;
+        private Line _dir = new Line(0, 1, 0);
         private Vector3 _previousPosition;
 
         public override void OnStartServer()
@@ -112,6 +112,8 @@ namespace Mirror.AirHockey2077
             _currentY = position.y;
             _ballDx = _currentX - _lastX;
             _ballDy = _currentY - _lastY;
+            _lastX = _currentX;
+            _lastY = _currentY;
         }
         
         public void UdateManager(NetworkManagerPong m)
@@ -124,7 +126,6 @@ namespace Mirror.AirHockey2077
                 var position = transform.position;
                 _dir = new Line(position.x, position.y, _previousPosition.x, _previousPosition.y);
                 _previousPosition = position;
-                UpdatePosition();
             }
         }
 

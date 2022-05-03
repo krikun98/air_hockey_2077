@@ -35,30 +35,51 @@ namespace Mirror.AirHockey2077
             {
                 SpawnBall();
             }
-            
+
             if (numPlayers == 1)
             {
-                // SpawnDefaultComputer();
                 SpawnSmartComputer();
             }
         }
         
-        private void SpawnDefaultComputer()
+        
+        
+        public void SpawnDefaultComputer()
         {
-            var pref = spawnPrefabs.Find(prefab => prefab.name == "DefaultComputer");
-            _computer = Instantiate(pref);
-            NetworkServer.Spawn(_computer);
-            computerInstance = _computer.GetComponent<DefaultComputer>();
-            SpawnBall();
+            if (!computerInstance)
+            {
+                var pref = spawnPrefabs.Find(prefab => prefab.name == "DefaultComputer");
+                _computer = Instantiate(pref);
+                NetworkServer.Spawn(_computer);
+                computerInstance = _computer.GetComponent<DefaultComputer>();
+                SpawnBall();
+            }
+            else
+            {
+                StopHost();
+                DespawnBall();
+                DespawnComputer();
+                keeper.ZeroScores();
+            }
         }
         
-        private void SpawnSmartComputer()
+        public void SpawnSmartComputer()
         {
-            var pref = spawnPrefabs.Find(prefab => prefab.name == "SmartComputer");
-            _computer = Instantiate(pref);
-            NetworkServer.Spawn(_computer);
-            computerInstance = _computer.GetComponent<SmartComputer>();
-            SpawnBall();
+            if (!computerInstance)
+            {
+                var pref = spawnPrefabs.Find(prefab => prefab.name == "SmartComputer");
+                _computer = Instantiate(pref);
+                NetworkServer.Spawn(_computer);
+                computerInstance = _computer.GetComponent<SmartComputer>();
+                SpawnBall();
+            }
+            // else
+            // {
+            //     StopHost();
+            //     DespawnBall();
+            //     DespawnComputer();
+            //     keeper.ZeroScores();
+            // }
         }
 
         public void SpawnBall()

@@ -5,13 +5,13 @@ namespace Mirror.AirHockey2077
     public abstract class Computer : NetworkBehaviour
     {
         protected readonly float speed = Constants.RacketSpeed;
-        protected Vector2 undef = new Vector2(-100, -100);
 
         public Rigidbody2D rigidbody2d;
         protected float myY;
         protected Ball ball;
         protected bool predict;
         protected Vector2 currentPredictPoint;
+        protected float lastBallDir;
 
         public void UpdateBall(Ball newBall)
         {
@@ -41,7 +41,7 @@ namespace Mirror.AirHockey2077
         public void ResetPrediction()
         {
             predict = false;
-            currentPredictPoint = undef;
+            currentPredictPoint = Constants.undef;
         }
 
         protected void MoveUp()

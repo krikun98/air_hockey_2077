@@ -6,99 +6,118 @@ namespace Mirror.AirHockey2077
 {
     public class SmartComputer : Computer
     {
-        private int _ballDir;
+        public int count;
 
         protected override void AI()
         {
             ball.UpdatePosition();
-            if (ball.Dx() > 0 && _ballDir <= 0)
+            // Debug.Log("CurrentDx = " + ball.Dx() + " LastDx = " + lastBallDir);
+            if (ball.Dx() > 0 && lastBallDir <= 0)
             {
-                _ballDir = 1;
                 ResetPrediction();
             }
 
-            if (ball.Dx() < 0 && _ballDir >= 0)
-            {
-                _ballDir = -1;
-                ResetPrediction();
-            }
+            lastBallDir = ball.Dx();
 
             UpdatePositions();
-            Predict();
+            if (ball.Dx() < 0)
+            {
+                return;
+            }
+
+            if (!predict)
+            {
+                Predict();
+            }
+            else
+            {
+                GoToPos(currentPredictPoint);
+            }
         }
 
         private void Predict()
         {
-            if (!predict)
-            {
-                currentPredictPoint = BallIntercept();
-            }
+            count++;
+            Debug.Log("Predict: " + count);
+            currentPredictPoint = BallIntercept();
 
-            if (currentPredictPoint != undef)
+            if (currentPredictPoint != Constants.undef)
             {
+                predict = true;
                 GoToPos(currentPredictPoint);
             }
         }
 
         private void GoToPos(Vector2 point)
         {
-            if (point.y > myY && point.y < Constants.WallTopRightPos)
+            if (point.y > myY && point.y < Constants.Top)
             {
-                MoveUp();
+                if (Math.Abs(point.y - myY) < Time.deltaTime * speed)
+                {
+                    rigidbody2d.transform.position += new Vector3(0, Math.Abs(point.y - myY), 0);
+                }
+                else
+                {
+                    MoveUp();
+                }
             }
 
-            if (point.y < myY && point.y > Constants.WallBottomRightPos)
+            if (point.y < myY && point.y > Constants.Bottom)
             {
-                MoveDown();
+                if (Math.Abs(point.y - myY) < Time.deltaTime * speed)
+                {
+                    rigidbody2d.transform.position += new Vector3(0, -Math.Abs(point.y - myY), 0);
+                }
+                else
+                {
+                    MoveDown();
+                }
             }
         }
 
         private Vector2 BallIntercept()
         {
-            float dx = ball.Dx();
-            float dy = ball.Dy();
+            var dx = ball.Dx();
+            var dy = ball.Dy();
 
-            if (dx <= 0 || predict)
-            {
-                return undef;
-            }
-
-            Line lastDir = new Line(0, 0 , 0);
+            // Line lastDir = new Line(0, 0, 0);
             Line currentDirLine = ball.Dir();
-            while (!predict)
+
+            if (dx > 0 && dy > 0)
             {
-                if (dx > 0 && dy > 0)
+                var pt = currentDirLine.Intersect(Constants.racketLine);
+
+                var newY = (Constants.Top + pt.y);
+                var blockCount = (int) (newY / (2 * Constants.Top));
+                var mod = newY % (2 * Constants.Top);
+                if (blockCount % 2 == 1)
                 {
-                    var newDirPair = Utils.NewDir(Constants.topWallLine, currentDirLine);
-                    if (newDirPair.Item1)
-                    {
-                        currentDirLine = newDirPair.Item2;
-                        dy = -dy;
-                    }
-                    else
-                    {
-                        lastDir = currentDirLine;
-                        predict = true;
-                    }
+                    return new Vector2(Constants.RacketPosX, Constants.Top - mod);
                 }
 
-                if (dx > 0 && dy < 0)
+                if (blockCount % 2 == 0)
                 {
-                    var newDirPair = Utils.NewDir(Constants.bottomWallLine, currentDirLine);
-                    if (newDirPair.Item1)
-                    {
-                        currentDirLine = newDirPair.Item2;
-                        dy = -dy;
-                    }
-                    else
-                    {
-                        lastDir = currentDirLine;
-                        predict = true;
-                    }
+                    return new Vector2(Constants.RacketPosX, -Constants.Top + mod);
                 }
             }
+            else if (dx > 0 && dy < 0)
+            {
+                var pt = currentDirLine.Intersect(Constants.racketLine);
 
-            return lastDir.Point(Constants.racketLine);
+                var newY = (Constants.Top - pt.y);
+                var blockCount = (int) (newY / (2 * Constants.Top));
+                var mod = newY % (2 * Constants.Top);
+                if (blockCount % 2 == 0)
+                {
+                    return new Vector2(Constants.RacketPosX, Constants.Top - mod);
+                }
+
+                if (blockCount % 2 == 1)
+                {
+                    return new Vector2(Constants.RacketPosX, -Constants.Top + mod);
+                }
+            }
+            return Constants.undef;
         }
     }
 }
