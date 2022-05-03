@@ -33,11 +33,13 @@ namespace Mirror.AirHockey2077
             // spawn ball if two players
             if (numPlayers == 2)
             {
+                DespawnComputer();
                 SpawnBall();
             }
 
             if (numPlayers == 1)
             {
+                // SpawnDefaultComputer();
                 SpawnSmartComputer();
             }
         }
