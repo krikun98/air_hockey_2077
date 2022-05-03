@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /*
-	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
-	API Reference: https://mirror-networking.com/docs/api/Mirror.NetworkManager.html
+    Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
+    API Reference: https://mirror-networking.com/docs/api/Mirror.NetworkManager.html
 */
 
 namespace Mirror.AirHockey2077
@@ -41,6 +41,7 @@ namespace Mirror.AirHockey2077
             {
                 // SpawnDefaultComputer();
                 SpawnSmartComputer();
+//                 SpawnComputer2();
             }
         }
         
@@ -56,13 +57,6 @@ namespace Mirror.AirHockey2077
                 computerInstance = _computer.GetComponent<DefaultComputer>();
                 SpawnBall();
             }
-            else
-            {
-                StopHost();
-                DespawnBall();
-                DespawnComputer();
-                keeper.ZeroScores();
-            }
         }
         
         public void SpawnSmartComputer()
@@ -75,13 +69,6 @@ namespace Mirror.AirHockey2077
                 computerInstance = _computer.GetComponent<SmartComputer>();
                 SpawnBall();
             }
-            // else
-            // {
-            //     StopHost();
-            //     DespawnBall();
-            //     DespawnComputer();
-            //     keeper.ZeroScores();
-            // }
         }
 
         public void SpawnBall()
@@ -94,6 +81,13 @@ namespace Mirror.AirHockey2077
             {
                 computerInstance.UpdateBall(_ballInstance);
             }
+
+        private void SpawnComputer2()
+        {
+            SpawnBall();
+            Transform start = rightRacketSpawn;
+            _computer = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Computer2"), start.position, start.rotation);
+            NetworkServer.Spawn(_computer);
         }
 
         public void IncrementScore(bool position)
@@ -104,9 +98,10 @@ namespace Mirror.AirHockey2077
         public void DespawnBall()
         {
             // destroy ball
-            if (ball != null)
-                NetworkServer.Destroy(ball);
+            if (_ball != null)
+                NetworkServer.Destroy(_ball);
         }
+
         
         private void DespawnComputer()
         {
@@ -117,6 +112,7 @@ namespace Mirror.AirHockey2077
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             DespawnBall();
+
             DespawnComputer();
             keeper.ZeroScores();
 
