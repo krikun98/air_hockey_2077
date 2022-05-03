@@ -17,6 +17,9 @@ namespace Mirror.AirHockey2077
         public Transform leftRacketSpawn;
         public Transform rightRacketSpawn;
         GameObject ball;
+        private Ball _ballInstance;
+        private GameObject _computer;
+        public Computer computerInstance;
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
@@ -32,12 +35,42 @@ namespace Mirror.AirHockey2077
             {
                 SpawnBall();
             }
+            
+            if (numPlayers == 1)
+            {
+                // SpawnDefaultComputer();
+                SpawnSmartComputer();
+            }
+        }
+        
+        private void SpawnDefaultComputer()
+        {
+            var pref = spawnPrefabs.Find(prefab => prefab.name == "DefaultComputer");
+            _computer = Instantiate(pref);
+            NetworkServer.Spawn(_computer);
+            computerInstance = _computer.GetComponent<DefaultComputer>();
+            SpawnBall();
+        }
+        
+        private void SpawnSmartComputer()
+        {
+            var pref = spawnPrefabs.Find(prefab => prefab.name == "SmartComputer");
+            _computer = Instantiate(pref);
+            NetworkServer.Spawn(_computer);
+            computerInstance = _computer.GetComponent<SmartComputer>();
+            SpawnBall();
         }
 
         public void SpawnBall()
         {
             ball = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Ball"));
             NetworkServer.Spawn(ball);
+            _ballInstance = ball.GetComponent<Ball>();
+            _ballInstance.UdateManager(this);
+            if (computerInstance)
+            {
+                computerInstance.UpdateBall(_ballInstance);
+            }
         }
 
         public void IncrementScore(bool position)
@@ -51,10 +84,17 @@ namespace Mirror.AirHockey2077
             if (ball != null)
                 NetworkServer.Destroy(ball);
         }
+        
+        private void DespawnComputer()
+        {
+            if (_computer != null)
+                NetworkServer.Destroy(_computer);
+        }
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             DespawnBall();
+            DespawnComputer();
             keeper.ZeroScores();
 
             // call base functionality (actually destroys the player)

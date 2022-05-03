@@ -6,6 +6,16 @@ namespace Mirror.AirHockey2077
     {
         public float speed = 30;
         public Rigidbody2D rigidbody2d;
+        
+        public NetworkManagerPong manager;
+        private float _currentX;
+        private float _currentY;
+        private float _lastX;
+        private float _lastY;
+        private float _ballDx;
+        private float _ballDy;
+        private Line _dir;
+        private Vector3 _previousPosition;
 
         public override void OnStartServer()
         {
@@ -57,7 +67,7 @@ namespace Mirror.AirHockey2077
             //   col.collider is the racket's collider
 
             // did we hit a racket? then we need to calculate the hit factor
-            if (col.transform.GetComponent<Player>())
+            if (col.transform.GetComponent<Player>() || col.transform.GetComponent<DefaultComputer>() || col.transform.GetComponent<SmartComputer>())
             {
                 // Calculate y direction via hit Factor
                 float y = HitFactor(transform.position,
@@ -73,6 +83,54 @@ namespace Mirror.AirHockey2077
                 // Set Velocity with dir * speed
                 rigidbody2d.velocity = dir * speed;
             }
+        }
+        
+        public float X()
+        {
+            return _currentX;
+        }
+
+        public float Y()
+        {
+            return _currentY;
+        }
+        
+        public float Dx()
+        {
+            return _ballDx;
+        }
+
+        public float Dy()
+        {
+            return _ballDy;
+        }
+        
+        public void UpdatePosition()
+        {
+            var position = rigidbody2d.transform.position;
+            _currentX = position.x;
+            _currentY = position.y;
+            _ballDx = _currentX - _lastX;
+            _ballDy = _currentY - _lastY;
+        }
+        
+        public void UdateManager(NetworkManagerPong m)
+        {
+            manager = m;
+        }
+
+        private void Update() {
+            if(transform.position != _previousPosition) {
+                var position = transform.position;
+                _dir = new Line(position.x, position.y, _previousPosition.x, _previousPosition.y);
+                _previousPosition = position;
+                UpdatePosition();
+            }
+        }
+
+        public Line Dir()
+        {
+            return _dir;
         }
     }
 }
