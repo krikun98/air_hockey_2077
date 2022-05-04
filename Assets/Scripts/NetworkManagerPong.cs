@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -20,16 +21,60 @@ namespace Mirror.AirHockey2077
         private Ball _ballInstance;
         private GameObject _computer;
         public Computer computerInstance;
+        List<GameObject> obstacles;
+        private int NUMBER_OF_OBSTACLES = 4;
+        private List<List<Vector2>> paths;
+        public int MAX_OBSTACLE_SPEED = 10;
+        public int MIN_OBSTACLE_SPEED = 5;
+        public int MAX_OBSTACLE_ROTATION_SPEED = 1000;
+        public int MIN_OBSTACLE_ROTATION_SPEED = 300;
+
+        public override void Awake()
+        {
+            base.Awake();
+
+            paths = new List<List<Vector2>>();
+
+            List<Vector2> squarePath = new List<Vector2>();
+            squarePath.Add(new Vector2(-6, 4));
+            squarePath.Add(new Vector2(-6, -4));
+            squarePath.Add(new Vector2(6, -4));
+            squarePath.Add(new Vector2(6, 4));
+            paths.Add(squarePath);
+
+            List<Vector2> trianglePath = new List<Vector2>();
+            trianglePath.Add(new Vector2(0, 3));
+            trianglePath.Add(new Vector2(-4, -3));
+            trianglePath.Add(new Vector2(4, -3));
+            paths.Add(trianglePath);
+
+            List<Vector2> horizontallPath = new List<Vector2>();
+            horizontallPath.Add(new Vector2(-6, 0));
+            horizontallPath.Add(new Vector2(6, 0));
+            paths.Add(horizontallPath);
+
+            List<Vector2> staticPath = new List<Vector2>();
+            staticPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            paths.Add(staticPath);
+
+            List<Vector2> randomPath = new List<Vector2>();
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            paths.Add(randomPath);
+        }
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-        {
+        {           
             // add player at correct spawn position
             Transform start = numPlayers == 0 ? leftRacketSpawn : rightRacketSpawn;
             GameObject player = Instantiate(playerPrefab, start.position, start.rotation);
             NetworkServer.AddPlayerForConnection(conn, player);
             
             keeper.ZeroScores();
-
+            // SpawnObstacles();
             // spawn ball if two players
             if (numPlayers == 2)
             {
@@ -68,6 +113,7 @@ namespace Mirror.AirHockey2077
                 NetworkServer.Spawn(_computer);
                 computerInstance = _computer.GetComponent<SmartComputer>();
                 SpawnBall();
+                SpawnObstacles();
             }
         }
 
@@ -104,24 +150,140 @@ namespace Mirror.AirHockey2077
                 NetworkServer.Destroy(ball);
         }
 
-        
         private void DespawnComputer()
         {
             if (_computer != null) {
                 NetworkServer.Destroy(_computer);
             	DespawnBall();
 			}
+		}
+
+        public void SpawnObstacles()
+        {
+            RegenerateRandomPaths();
+
+            obstacles = new List<GameObject>();
+            int numObstacles = Random.Range(1, paths.Count);
+            // int numObstacles = 4;
+            Debug.Log("numObstacles=" + numObstacles);
+            List<int> obstaclesNums = GenerateRandom(numObstacles, NUMBER_OF_OBSTACLES);
+            List<int> pathsNums = GenerateRandomUnique(paths.Count);
+            PrintList(obstaclesNums, "obstaclesNums");
+            PrintList(pathsNums, "pathsNums");
+            for(int i = 0; i < numObstacles; i++)
+            {
+                var obstacle = CreateObstacle(obstaclesNums[i] + 1, pathsNums[i]);
+                obstacles.Add(obstacle);
+                NetworkServer.Spawn(obstacle);
+            }
+
+            // Debug.Log("SpawnObstacles");
+            // var obstacle = CreateObstacle(4, 0);
+            // NetworkServer.Spawn(obstacle);
+            // Debug.Log("NetworkServer.Spawn(obstacle);");
+        }
+
+        private GameObject CreateObstacle(int obstacleNum, int pathNum)
+        {
+            Debug.Log("CreateObstacle" + obstacleNum);
+            GameObject obstacle = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Obstacle" + obstacleNum));
+            Obstacle other = (Obstacle) obstacle.GetComponent(typeof(Obstacle));
+            other.SetPath(paths[pathNum]);
+            other.SetStartPosition(paths[pathNum][0]);
+            int _speed = Random.Range(MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED);
+            Debug.Log("_speed=" + _speed);
+            if (Random.value > 0.5f)
+            {
+                int _rotationSpeed = Random.Range(MIN_OBSTACLE_ROTATION_SPEED, MAX_OBSTACLE_ROTATION_SPEED);
+                other.SetRotationSpeed(_rotationSpeed);
+                Debug.Log("_rotationSpeed=" + _rotationSpeed);
+            }
+            return obstacle;
+        }
+
+        public void DespawnObstacles()
+        {
+            // destroy ball
+            if (obstacles != null) {                
+                foreach(GameObject obstacle in obstacles){
+                    NetworkServer.Destroy(obstacle);
+                }
+            }
         }
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             DespawnBall();
-
             DespawnComputer();
+            DespawnObstacles();
             keeper.ZeroScores();
 
             // call base functionality (actually destroys the player)
             base.OnServerDisconnect(conn);
+        }
+
+        public static List<int> GenerateRandom(int count, int rangeEnd)
+        {
+            List<int> result = new List<int>();
+            for(int j = 0; j < count; j++)
+            {
+                result.Add(Random.Range(0, rangeEnd));
+            }
+            return result;
+        }
+
+        public static List<int> GenerateRandomUnique(int count)
+        {
+            List<int> result = new List<int>();
+            for(int j = 0; j < count; j++)
+            {
+                result.Add(j);
+            }
+
+            // shuffle the results:
+            int i = result.Count;  
+            while (i > 1)
+            {  
+                i--;  
+                int k = Random.Range(0, i + 1);  
+                int value = result[k];  
+                result[k] = result[i];  
+                result[i] = value;  
+            }  
+            return result;
+        }
+
+        private void RegenerateRandomPaths()
+        {
+            ClearRandomPaths();
+
+            List<Vector2> staticPath = new List<Vector2>();
+            staticPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            paths.Add(staticPath);
+
+            List<Vector2> randomPath = new List<Vector2>();
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            randomPath.Add(new Vector2(Random.Range(-5, 5), Random.Range(-3, 3)));
+            paths.Add(randomPath);
+        }
+
+        private void ClearRandomPaths()
+        {
+            paths.RemoveAt(paths.Count - 1);
+            paths.RemoveAt(paths.Count - 1);
+        }
+
+        private static void PrintList(List<int> myList, string listName)
+        {
+            string result = listName + " contents: ";
+            foreach (var item in myList)
+            {
+                result += item.ToString() + ", ";
+            }
+            Debug.Log(result);
         }
     }
 }
