@@ -101,6 +101,7 @@ namespace Mirror.AirHockey2077
                 NetworkServer.Spawn(_computer);
                 computerInstance = _computer.GetComponent<DefaultComputer>();
                 SpawnBall();
+                SpawnObstacles();
             }
         }
         
