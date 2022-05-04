@@ -2335,10 +2335,6 @@ MonoBehaviour:
   rightRacketSpawn: {fileID: 1397990096}
   computerInstanceLeft: {fileID: 0}
   computerInstanceRight: {fileID: 0}
-  MAX_OBSTACLE_SPEED: 10
-  MIN_OBSTACLE_SPEED: 5
-  MAX_OBSTACLE_ROTATION_SPEED: 1000
-  MIN_OBSTACLE_ROTATION_SPEED: 300
 --- !u!1 &1980718314
 GameObject:
   m_ObjectHideFlags: 0

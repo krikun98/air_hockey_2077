@@ -164,6 +164,7 @@ namespace Mirror.AirHockey2077
                 NetworkServer.Destroy(_computerRight);
 			}
             DespawnBall();
+            keeper.ZeroScores();
 		}
 
         public void SpawnObstacles()
