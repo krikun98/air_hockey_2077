@@ -25,5 +25,7 @@ namespace Mirror.AirHockey2077
         public const float ObstacleSpeed = 10;
         public const float RotationSpeed = 1000;
         public const int MaxObstacleCount = 3;
+
+        public const float IgnoreThreshold = 0.5f;
     }
 }

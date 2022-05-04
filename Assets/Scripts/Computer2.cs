@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Assertions;
+using System;
 
 namespace Mirror.AirHockey2077
 {
@@ -33,7 +34,9 @@ namespace Mirror.AirHockey2077
             _ballPosY = _ball.transform.position.y;
             _myPosY = rigidbody2d.position.y;
 
-            
+            if (Math.Abs(_myPosY - _ballPosY) < Constants.IgnoreThreshold) {
+				return;
+			}
             if (_myPosY < _ballPosY && _myPosY < _wallTopPos)
             {
                 Move(new Vector3(0, speed * Time.fixedDeltaTime, 0));
