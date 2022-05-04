@@ -79,6 +79,8 @@ namespace Mirror.AirHockey2077
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {           
             DespawnComputers();
+        	DespawnBall();
+        	DespawnObstacles();
             // add player at correct spawn position
             Transform start = numPlayers == 0 ? leftRacketSpawn : rightRacketSpawn;
             GameObject player = Instantiate(playerPrefab, start.position, start.rotation);
