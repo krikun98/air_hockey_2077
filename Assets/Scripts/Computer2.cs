@@ -68,7 +68,7 @@ namespace Mirror.AirHockey2077
         {
             _wallTop = GameObject.Find("WallTop");
             Assert.IsNotNull(_wallTop);
-            _wallTopPos = _wallTop.transform.position.y - _wallTop.GetComponent<BoxCollider2D>().bounds.size.y * 4;
+            _wallTopPos = _wallTop.transform.position.y - _wallTop.GetComponent<BoxCollider2D>().bounds.size.y * 10;
         }   
 
 
@@ -76,7 +76,7 @@ namespace Mirror.AirHockey2077
         {
             _wallBottom = GameObject.Find("WallBottom");
             Assert.IsNotNull(_wallBottom);
-            _wallBottomPos = _wallBottom.transform.position.y + _wallTop.GetComponent<BoxCollider2D>().bounds.size.y * 4;
+            _wallBottomPos = _wallBottom.transform.position.y + _wallTop.GetComponent<BoxCollider2D>().bounds.size.y * 10;
         }
     }
 }
