@@ -130,7 +130,7 @@ namespace Mirror.AirHockey2077
             _lastY = _currentY;
         }
         
-        public void UdateManager(NetworkManagerPong m)
+        public void UpdateManager(NetworkManagerPong m)
         {
             manager = m;
         }

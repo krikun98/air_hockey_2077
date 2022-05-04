@@ -45,7 +45,7 @@ namespace Mirror.AirHockey2077
         }
 
 		protected void Move(Vector3 movement) {
-            transform.position += movement;
+            rigidbody2d.transform.position += movement;
 		}
     }
 }
