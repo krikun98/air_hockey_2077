@@ -44,22 +44,8 @@ namespace Mirror.AirHockey2077
             currentPredictPoint = Constants.undef;
         }
 
-		[ServerCallback]
 		protected void Move(Vector3 movement) {
-			MoveServer(movement);
-			MoveClient(movement);
+            transform.position += movement;
 		}
-
-		[ServerCallback]
-        private void MoveServer(Vector3 movement)
-        {
-            rigidbody2d.transform.position += movement;
-        }
-
-		[ClientRpc]
-        private void MoveClient(Vector3 movement)
-        {
-            rigidbody2d.transform.position += movement;
-        }
     }
 }
