@@ -21,6 +21,10 @@ namespace Mirror.AirHockey2077
         List<GameObject> obstacles;
         private int NUMBER_OF_OBSTACLES = 4;
         private List<List<Vector2>> paths;
+        public int MAX_OBSTACLE_SPEED = 10;
+        public int MIN_OBSTACLE_SPEED = 5;
+        public int MAX_OBSTACLE_ROTATION_SPEED = 1000;
+        public int MIN_OBSTACLE_ROTATION_SPEED = 300;
 
         public override void Awake()
         {
@@ -126,11 +130,11 @@ namespace Mirror.AirHockey2077
             Obstacle other = (Obstacle) obstacle.GetComponent(typeof(Obstacle));
             other.SetPath(paths[pathNum]);
             other.SetStartPosition(paths[pathNum][0]);
-            int _speed = Random.Range(10, 20);
+            int _speed = Random.Range(MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED);
             Debug.Log("_speed=" + _speed);
             if (Random.value > 0.5f)
             {
-                int _rotationSpeed = Random.Range(300, 1000);
+                int _rotationSpeed = Random.Range(MIN_OBSTACLE_ROTATION_SPEED, MAX_OBSTACLE_ROTATION_SPEED);
                 other.SetRotationSpeed(_rotationSpeed);
                 Debug.Log("_rotationSpeed=" + _rotationSpeed);
             }
