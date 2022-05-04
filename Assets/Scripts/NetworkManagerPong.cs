@@ -199,6 +199,7 @@ namespace Mirror.AirHockey2077
             other.SetPath(paths[pathNum]);
             other.SetStartPosition(paths[pathNum][0]);
             int _speed = Random.Range(MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED);
+            other.SetSpeed(_speed);
             Debug.Log("_speed=" + _speed);
             if (Random.value > 0.5f)
             {
