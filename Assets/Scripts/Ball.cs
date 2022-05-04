@@ -42,7 +42,21 @@ namespace Mirror.AirHockey2077
             // Debug.Log("Tilt is " + tilt);
             rigidbody2d.position = Vector2.up * 5;
             // Serve the ball from left player
-            rigidbody2d.velocity = (Vector2.down * tilt + dirVector * (1-tilt))* speed;
+
+
+            // float y = HitFactor(transform.position,
+            //                         col.transform.position,
+            //                         col.collider.bounds.size.y);
+
+            // // Calculate x direction via opposite collision
+            // float x = col.relativeVelocity.x > 0 ? 1 : -1;
+
+            // Calculate direction, make length=1 via .normalized
+            // Vector2 dir = new Vector2(x, y).normalized;
+
+            // Vector2 max_velocity = (Vector2.down * tilt + dirVector * (1-tilt))* speed;
+            // rigidbody2d.velocity = max_velocity > dir * speed ? dir * speed : max_velocity;
+            rigidbody2d.velocity= (Vector2.down * tilt + dirVector * (1-tilt))* speed;
         }
 
         float HitFactor(Vector2 ballPos, Vector2 racketPos, float racketHeight)
