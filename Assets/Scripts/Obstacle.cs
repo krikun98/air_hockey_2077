@@ -6,7 +6,7 @@ namespace Mirror.AirHockey2077
 {
     public class Obstacle : NetworkBehaviour
     {
-        public float speed = 10;
+        public float speed = Constants.ObstacleSpeed;
         public float _rotationSpeed = 0;
         public Rigidbody2D rigidbody2d;
 
@@ -39,7 +39,7 @@ namespace Mirror.AirHockey2077
             {
                 transform.position = Vector2.MoveTowards(transform.position,
                 path[waypointIndex],
-                speed * Time.deltaTime);
+                speed * Time.fixedDeltaTime);
                 if (transform.position == (Vector3)path[waypointIndex])
                 {
                     // waypointIndex += 1;

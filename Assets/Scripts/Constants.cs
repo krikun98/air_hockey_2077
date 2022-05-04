@@ -22,5 +22,6 @@ namespace Mirror.AirHockey2077
         public static readonly Vector2 undef = new Vector2(-100, -100);
 
         public const float BallSpeed = 30;
+        public const float ObstacleSpeed = 10;
     }
 }

@@ -26,8 +26,8 @@ namespace Mirror.AirHockey2077
         List<GameObject> obstacles;
         private int NUMBER_OF_OBSTACLES = 4;
         private List<List<Vector2>> paths;
-        public int MAX_OBSTACLE_SPEED = 10;
-        public int MIN_OBSTACLE_SPEED = 5;
+        public const float MAX_OBSTACLE_SPEED = Constants.ObstacleSpeed;
+        public const float MIN_OBSTACLE_SPEED = Constants.ObstacleSpeed/2f;
         public int MAX_OBSTACLE_ROTATION_SPEED = 1000;
         public int MIN_OBSTACLE_ROTATION_SPEED = 300;
 
@@ -198,7 +198,7 @@ namespace Mirror.AirHockey2077
             Obstacle other = (Obstacle) obstacle.GetComponent(typeof(Obstacle));
             other.SetPath(paths[pathNum]);
             other.SetStartPosition(paths[pathNum][0]);
-            int _speed = Random.Range(MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED);
+            float _speed = Random.Range(MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED);
             other.SetSpeed(_speed);
             Debug.Log("_speed=" + _speed);
             if (Random.value > 0.5f)
