@@ -135,7 +135,8 @@ namespace Mirror.AirHockey2077
             manager = m;
         }
 
-        private void FixedUpdate() {
+        [ServerCallback] 
+        void FixedUpdate() {
             if(transform.position != _previousPosition) {
                 var position = transform.position;
                 _dir = new Line(position.x, position.y, _previousPosition.x, _previousPosition.y);

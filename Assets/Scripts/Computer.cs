@@ -26,7 +26,7 @@ namespace Mirror.AirHockey2077
         }
 
         [ServerCallback]
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             AI();
         }
