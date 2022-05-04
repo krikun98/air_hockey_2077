@@ -107,8 +107,10 @@ namespace Mirror.AirHockey2077
         
         private void DespawnComputer()
         {
-            if (_computer != null)
+            if (_computer != null) {
                 NetworkServer.Destroy(_computer);
+            	DespawnBall();
+			}
         }
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
