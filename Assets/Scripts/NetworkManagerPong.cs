@@ -110,6 +110,7 @@ namespace Mirror.AirHockey2077
         
         public void SpawnComputer(Transform location, string className)
         {
+            keeper.ZeroScores();
             if (!(computerInstanceLeft && location == leftRacketSpawn) || !(computerInstanceRight && location == rightRacketSpawn))
             {
                 var pref = spawnPrefabs.Find(prefab => prefab.name == className);
