@@ -24,14 +24,14 @@ namespace Mirror.AirHockey2077
                 return;
             }
 
-            if (!predict)
-            {
+            // if (!predict)
+            // {
                 Predict();
-            }
-            else
-            {
-                GoToPos(currentPredictPoint);
-            }
+            // }
+            // else
+            // {
+            //     GoToPos(currentPredictPoint);
+            // }
         }
 
         private void Predict()
