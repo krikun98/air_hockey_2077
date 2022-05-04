@@ -16,7 +16,9 @@ namespace Mirror.AirHockey2077
         void OnTriggerExit2D(Collider2D col)
         {
             manager.DespawnBall(); 
+            manager.DespawnObstacles();
             manager.IncrementScore(position);
+            manager.SpawnObstacles();
             manager.SpawnBall();
         }
     }
