@@ -20,5 +20,12 @@ namespace Mirror.AirHockey2077
         public static readonly Line racketLine = new Line(1, 0, -RacketPosX);
         
         public static readonly Vector2 undef = new Vector2(-100, -100);
+
+        public const float BallSpeed = 30;
+        public const float ObstacleSpeed = 10;
+        public const float RotationSpeed = 1000;
+        public const int MaxObstacleCount = 3;
+
+        public const float IgnoreThreshold = 0.5f;
     }
 }

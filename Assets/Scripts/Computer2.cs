@@ -1,32 +1,20 @@
 using UnityEngine;
 using UnityEngine.Assertions;
+using System;
 
 namespace Mirror.AirHockey2077
 {
-    public class Computer2 : NetworkBehaviour
-    {
-        public float speed = 10;
-        
+    public class Computer2 : Computer 
+	{       
         private GameObject _wallTop;
         private GameObject _wallBottom;
         private float _wallTopPos;
         private float _wallBottomPos;
-        
-        public Rigidbody2D rigidbody2d;
-        private float _myPosY;
-        
+        private float _myPosY;        
         private GameObject _ball;
         private float _ballPosY;
 
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            // only simulate ball physics on server
-            rigidbody2d.simulated = true;
-        }
-
-        [ServerCallback]
-        void Update()
+        protected override void AI()
         {
             if (!_ball)
             {
@@ -46,15 +34,17 @@ namespace Mirror.AirHockey2077
             _ballPosY = _ball.transform.position.y;
             _myPosY = rigidbody2d.position.y;
 
-            
+            if (Math.Abs(_myPosY - _ballPosY) < Constants.IgnoreThreshold) {
+				return;
+			}
             if (_myPosY < _ballPosY && _myPosY < _wallTopPos)
             {
-                rigidbody2d.transform.position += new Vector3(0, speed * Time.deltaTime, 0);
+                Move(new Vector3(0, speed * Time.fixedDeltaTime, 0));
             }
             
             if (_myPosY > _ballPosY && _myPosY > _wallBottomPos)
             {
-                rigidbody2d.transform.position += new Vector3(0, -speed * Time.deltaTime, 0);
+                Move(new Vector3(0, -speed * Time.fixedDeltaTime, 0));
             }
         }
 
@@ -78,5 +68,5 @@ namespace Mirror.AirHockey2077
             Assert.IsNotNull(_wallBottom);
             _wallBottomPos = _wallBottom.transform.position.y + _wallTop.GetComponent<BoxCollider2D>().bounds.size.y * 10;
         }
-    }
+	}
 }

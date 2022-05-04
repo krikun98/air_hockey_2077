@@ -4,7 +4,7 @@ namespace Mirror.AirHockey2077
 {
     public class Ball : NetworkBehaviour
     {
-        public float speed = 30;
+        public float speed = Constants.BallSpeed;
         public Rigidbody2D rigidbody2d;
         
         public NetworkManagerPong manager;
@@ -81,7 +81,7 @@ namespace Mirror.AirHockey2077
             //   col.collider is the racket's collider
 
             // did we hit a racket? then we need to calculate the hit factor
-            if (col.transform.GetComponent<Player>() || col.transform.GetComponent<DefaultComputer>() || col.transform.GetComponent<SmartComputer>())
+            if (col.transform.GetComponent<Player>() || col.transform.GetComponent<Computer>())
             {
                 // Calculate y direction via hit Factor
                 float y = HitFactor(transform.position,
@@ -130,17 +130,19 @@ namespace Mirror.AirHockey2077
             _lastY = _currentY;
         }
         
-        public void UdateManager(NetworkManagerPong m)
+        public void UpdateManager(NetworkManagerPong m)
         {
             manager = m;
         }
 
-        private void FixedUpdate() {
+        [ServerCallback] 
+        void FixedUpdate() {
             if(transform.position != _previousPosition) {
                 var position = transform.position;
                 _dir = new Line(position.x, position.y, _previousPosition.x, _previousPosition.y);
                 _previousPosition = position;
             }
+			rigidbody2d.velocity = rigidbody2d.velocity.normalized * speed;
         }
 
         public Line Dir()

@@ -19,15 +19,17 @@ namespace Mirror.AirHockey2077
         public Transform rightRacketSpawn;
         GameObject ball;
         private Ball _ballInstance;
-        private GameObject _computer;
-        public Computer computerInstance;
+        private GameObject _computerLeft;
+        private GameObject _computerRight;
+        public Computer computerInstanceLeft;
+        public Computer computerInstanceRight;
         List<GameObject> obstacles;
         private int NUMBER_OF_OBSTACLES = 4;
         private List<List<Vector2>> paths;
-        public int MAX_OBSTACLE_SPEED = 10;
-        public int MIN_OBSTACLE_SPEED = 5;
-        public int MAX_OBSTACLE_ROTATION_SPEED = 1000;
-        public int MIN_OBSTACLE_ROTATION_SPEED = 300;
+        public const float MAX_OBSTACLE_SPEED = Constants.ObstacleSpeed;
+        public const float MIN_OBSTACLE_SPEED = Constants.ObstacleSpeed/2f;
+        public const float MAX_OBSTACLE_ROTATION_SPEED = Constants.RotationSpeed;
+        public const float MIN_OBSTACLE_ROTATION_SPEED = Constants.RotationSpeed/3f;
 
         public override void Awake()
         {
@@ -66,8 +68,19 @@ namespace Mirror.AirHockey2077
             paths.Add(randomPath);
         }
 
+        public override void OnStartServer() {
+            SpawnComputer(leftRacketSpawn, "Computer2");
+            SpawnComputer(rightRacketSpawn, "SmartComputer");
+            SpawnBall();
+            SpawnObstacles();
+			base.OnStartServer();
+		}
+
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {           
+            DespawnComputers();
+        	DespawnBall();
+        	DespawnObstacles();
             // add player at correct spawn position
             Transform start = numPlayers == 0 ? leftRacketSpawn : rightRacketSpawn;
             GameObject player = Instantiate(playerPrefab, start.position, start.rotation);
@@ -78,13 +91,16 @@ namespace Mirror.AirHockey2077
             // spawn ball if two players
             if (numPlayers == 2)
             {
-                DespawnComputer();
+                DespawnComputers();
                 SpawnBall();
+                SpawnObstacles();
             }
 
             if (numPlayers == 1)
             {
-                SpawnDefaultComputer();
+                SpawnComputer(rightRacketSpawn, "SmartComputer");
+                SpawnBall();
+                SpawnObstacles();
                 // SpawnSmartComputer();
 //                 SpawnComputer2();
             }
@@ -92,29 +108,22 @@ namespace Mirror.AirHockey2077
         
         
         
-        public void SpawnDefaultComputer()
+        public void SpawnComputer(Transform location, string className)
         {
-            if (!computerInstance)
+            keeper.ZeroScores();
+            if (!(computerInstanceLeft && location == leftRacketSpawn) || !(computerInstanceRight && location == rightRacketSpawn))
             {
-                var pref = spawnPrefabs.Find(prefab => prefab.name == "DefaultComputer");
-                _computer = Instantiate(pref);
-                NetworkServer.Spawn(_computer);
-                computerInstance = _computer.GetComponent<DefaultComputer>();
-                SpawnBall();
-                SpawnObstacles();
-            }
-        }
-        
-        public void SpawnSmartComputer()
-        {
-            if (!computerInstance)
-            {
-                var pref = spawnPrefabs.Find(prefab => prefab.name == "SmartComputer");
-                _computer = Instantiate(pref);
-                NetworkServer.Spawn(_computer);
-                computerInstance = _computer.GetComponent<SmartComputer>();
-                SpawnBall();
-                SpawnObstacles();
+                var pref = spawnPrefabs.Find(prefab => prefab.name == className);
+				if (location == leftRacketSpawn) {
+                	_computerLeft = Instantiate(pref, location.position, location.rotation);
+                	NetworkServer.Spawn(_computerLeft);
+                	computerInstanceLeft = _computerLeft.GetComponent<Computer>();
+				}
+				else {
+                	_computerRight = Instantiate(pref, location.position, location.rotation);
+                	NetworkServer.Spawn(_computerRight);
+                	computerInstanceRight = _computerRight.GetComponent<Computer>();
+				}
             }
         }
 
@@ -123,20 +132,16 @@ namespace Mirror.AirHockey2077
             ball = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Ball"));
             NetworkServer.Spawn(ball);
             _ballInstance = ball.GetComponent<Ball>();
-            _ballInstance.UdateManager(this);
-            if (computerInstance)
+            _ballInstance.UpdateManager(this);
+            if (computerInstanceLeft)
             {
-                computerInstance.UpdateBall(_ballInstance);
+                computerInstanceLeft.UpdateBall(_ballInstance);
+            }
+            if (computerInstanceRight)
+            {
+                computerInstanceRight.UpdateBall(_ballInstance);
             }
 
-        }
-
-        private void SpawnComputer2()
-        {
-            SpawnBall();
-            Transform start = rightRacketSpawn;
-            _computer = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "Computer2"), start.position, start.rotation);
-            NetworkServer.Spawn(_computer);
         }
 
         public void IncrementScore(bool position)
@@ -151,12 +156,16 @@ namespace Mirror.AirHockey2077
                 NetworkServer.Destroy(ball);
         }
 
-        private void DespawnComputer()
+        private void DespawnComputers()
         {
-            if (_computer != null) {
-                NetworkServer.Destroy(_computer);
-            	DespawnBall();
+            if (_computerLeft != null) {
+                NetworkServer.Destroy(_computerLeft);
 			}
+            if (_computerRight != null) {
+                NetworkServer.Destroy(_computerRight);
+			}
+            DespawnBall();
+            keeper.ZeroScores();
 		}
 
         public void SpawnObstacles()
@@ -164,7 +173,7 @@ namespace Mirror.AirHockey2077
             RegenerateRandomPaths();
 
             obstacles = new List<GameObject>();
-            int numObstacles = Random.Range(1, paths.Count);
+            int numObstacles = Random.Range(1, Constants.MaxObstacleCount);
             // int numObstacles = 4;
             Debug.Log("numObstacles=" + numObstacles);
             List<int> obstaclesNums = GenerateRandom(numObstacles, NUMBER_OF_OBSTACLES);
@@ -191,11 +200,12 @@ namespace Mirror.AirHockey2077
             Obstacle other = (Obstacle) obstacle.GetComponent(typeof(Obstacle));
             other.SetPath(paths[pathNum]);
             other.SetStartPosition(paths[pathNum][0]);
-            int _speed = Random.Range(MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED);
+            float _speed = Random.Range(MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED);
+            other.SetSpeed(_speed);
             Debug.Log("_speed=" + _speed);
             if (Random.value > 0.5f)
             {
-                int _rotationSpeed = Random.Range(MIN_OBSTACLE_ROTATION_SPEED, MAX_OBSTACLE_ROTATION_SPEED);
+                float _rotationSpeed = Random.Range(MIN_OBSTACLE_ROTATION_SPEED, MAX_OBSTACLE_ROTATION_SPEED);
                 other.SetRotationSpeed(_rotationSpeed);
                 Debug.Log("_rotationSpeed=" + _rotationSpeed);
             }
@@ -215,7 +225,7 @@ namespace Mirror.AirHockey2077
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             DespawnBall();
-            DespawnComputer();
+            DespawnComputers();
             DespawnObstacles();
             keeper.ZeroScores();
 
