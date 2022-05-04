@@ -142,6 +142,7 @@ namespace Mirror.AirHockey2077
                 _dir = new Line(position.x, position.y, _previousPosition.x, _previousPosition.y);
                 _previousPosition = position;
             }
+			rigidbody2d.velocity = rigidbody2d.velocity.normalized * speed;
         }
 
         public Line Dir()
