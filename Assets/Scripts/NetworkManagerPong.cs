@@ -98,7 +98,7 @@ namespace Mirror.AirHockey2077
 
             if (numPlayers == 1)
             {
-                SpawnComputer(rightRacketSpawn, "DefaultComputer");
+                SpawnComputer(rightRacketSpawn, "SmartComputer");
                 SpawnBall();
                 SpawnObstacles();
                 // SpawnSmartComputer();
