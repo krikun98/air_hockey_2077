@@ -69,8 +69,8 @@ namespace Mirror.AirHockey2077
         }
 
         public override void OnStartServer() {
-            SpawnComputer(leftRacketSpawn, "DefaultComputer");
-            SpawnComputer(rightRacketSpawn, "DefaultComputer");
+            SpawnComputer(leftRacketSpawn, "Computer2");
+            SpawnComputer(rightRacketSpawn, "SmartComputer");
             SpawnBall();
             SpawnObstacles();
 			base.OnStartServer();

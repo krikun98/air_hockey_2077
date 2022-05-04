@@ -36,12 +36,12 @@ namespace Mirror.AirHockey2077
             
             if (_myPosY < _ballPosY && _myPosY < _wallTopPos)
             {
-                Move(new Vector3(0, speed * Time.deltaTime, 0));
+                Move(new Vector3(0, speed * Time.fixedDeltaTime, 0));
             }
             
             if (_myPosY > _ballPosY && _myPosY > _wallBottomPos)
             {
-                Move(new Vector3(0, -speed * Time.deltaTime, 0));
+                Move(new Vector3(0, -speed * Time.fixedDeltaTime, 0));
             }
         }
 
